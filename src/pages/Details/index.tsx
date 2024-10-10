@@ -66,7 +66,6 @@ const Details: React.FC = () => {
         <div>
             <h1>{movie?.Title}</h1>
             <p>{movie?.Plot}</p>
-            {/* Dodaj więcej szczegółów filmu */}
         </div>
     );
 };

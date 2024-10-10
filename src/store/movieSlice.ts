@@ -29,6 +29,7 @@ interface MovieState {
     error: string | null;
     totalResults: number;
     searchParams: SearchParams;
+    noResults: boolean; // Nowa właściwość
 }
 
 const initialState: MovieState = {
@@ -41,7 +42,8 @@ const initialState: MovieState = {
         year: "",
         type: "",
         page: 1
-    }
+    },
+    noResults: false // Inicjalizacja
 };
 
 export const fetchMovies = createAsyncThunk(
@@ -68,30 +70,44 @@ const movieSlice = createSlice({
             state.movies = [];
             state.totalResults = 0;
             state.searchParams = initialState.searchParams;
+            state.error = null;
+            state.noResults = false;
         },
         setSearchParams: (state, action: PayloadAction<SearchParams>) => {
             state.searchParams = action.payload;
+            state.noResults = false;
+            state.error = null;
         }
     },
     extraReducers: (builder) => {
         builder.addCase(fetchMovies.pending, (state) => {
             state.loading = true;
             state.error = null;
+            state.noResults = false;
         });
         builder.addCase(fetchMovies.fulfilled, (state, action) => {
             state.loading = false;
             if (action.payload.Response === "True") {
                 state.movies = action.payload.Search;
                 state.totalResults = parseInt(action.payload.totalResults);
+                state.noResults = false;
             } else {
-                state.error = action.payload.Error || null;
-                state.movies = [];
-                state.totalResults = 0;
+                if (action.payload.Error === "Movie not found!") {
+                    state.movies = [];
+                    state.totalResults = 0;
+                    state.noResults = true;
+                } else {
+                    state.error = action.payload.Error || null;
+                    state.movies = [];
+                    state.totalResults = 0;
+                    state.noResults = false;
+                }
             }
         });
         builder.addCase(fetchMovies.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message || "Coś poszło nie tak";
+            state.noResults = false;
         });
     }
 });

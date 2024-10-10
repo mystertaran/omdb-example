@@ -6,6 +6,8 @@ import MovieCard from "../../components/MovieCard";
 import Pagination from "../../components/Pagination";
 import FilterOptions from "../../components/FilterOptions";
 import MovieModal from "../../components/MovieModal";
+import NoResults from "../../components/NoResults";
+import {scrollToTop} from "src/utils/scrollToTop";
 
 interface SearchParams {
     search: string;
@@ -16,7 +18,7 @@ interface SearchParams {
 
 const Home: React.FC = () => {
     const dispatch = useAppDispatch();
-    const {movies, loading, error, totalResults, searchParams} = useAppSelector(
+    const {movies, loading, error, totalResults, searchParams, noResults} = useAppSelector(
         (state) => state.movies
     );
 
@@ -31,6 +33,7 @@ const Home: React.FC = () => {
         };
         dispatch(setSearchParams(updatedParams));
         dispatch(fetchMovies(updatedParams));
+        scrollToTop();
     };
 
     const handlePageChange = (page: number) => {
@@ -40,6 +43,7 @@ const Home: React.FC = () => {
         };
         dispatch(setSearchParams(updatedParams));
         dispatch(fetchMovies(updatedParams));
+        scrollToTop();
     };
 
     const handleMovieClick = (imdbID: string) => {
@@ -59,6 +63,7 @@ const Home: React.FC = () => {
         };
         dispatch(setSearchParams(updatedParams));
         dispatch(fetchMovies(updatedParams));
+        scrollToTop();
     };
 
     const handleFilterReset = () => {
@@ -70,6 +75,7 @@ const Home: React.FC = () => {
         };
         dispatch(setSearchParams(updatedParams));
         dispatch(fetchMovies(updatedParams));
+        scrollToTop();
     };
 
     useEffect(() => {
@@ -82,9 +88,9 @@ const Home: React.FC = () => {
         <div className="container mx-auto p-4">
             <SearchBar onSearch={handleSearch} />
             {loading && <p className="text-center">Ładowanie...</p>}
-            {error && <p className="text-center text-red-500">Błąd: {error}</p>}
+            {error && !noResults && <p className="text-center text-red-500">Błąd: {error}</p>}
 
-            {movies.length > 0 && (
+            {movies.length > 0 ? (
                 <>
                     <div className="flex flex-col md:flex-row items-center justify-between mt-6">
                         <FilterOptions
@@ -112,6 +118,10 @@ const Home: React.FC = () => {
                         />
                     )}
                 </>
+            ) : (
+                !loading &&
+                searchParams.search &&
+                noResults && <NoResults onResetFilters={handleFilterReset} />
             )}
 
             {selectedMovieId && <MovieModal imdbID={selectedMovieId} onClose={handleModalClose} />}
