@@ -8,6 +8,7 @@ import FilterOptions from "../../components/FilterOptions";
 import MovieModal from "../../components/MovieModal";
 import NoResults from "../../components/NoResults";
 import {scrollToTop} from "src/utils/scrollToTop";
+import Loader from "components/Loader";
 
 interface SearchParams {
     search: string;
@@ -87,7 +88,7 @@ const Home: React.FC = () => {
     return (
         <div className="container mx-auto p-4">
             <SearchBar onSearch={handleSearch} />
-            {loading && <p className="text-center">Ładowanie...</p>}
+            {loading && <Loader />}
             {error && !noResults && <p className="text-center text-red-500">Błąd: {error}</p>}
 
             {movies.length > 0 ? (
