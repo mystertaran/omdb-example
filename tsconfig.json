@@ -14,6 +14,7 @@
     "jsx": "react",
     "allowJs": true,
     "baseUrl": "./",
+    "types": ["jest", "@testing-library/jest-dom"],
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "moduleResolution": "node",
@@ -26,6 +27,7 @@
   },
   "include": [
     "./src",
-    "./webpack.config.ts"
+    "./webpack.config.ts",
+    "./src/jest-dom.d.ts"
   ]
 }
